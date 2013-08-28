@@ -1,0 +1,256 @@
+/**
+ * Solarized Light theme for reveal.js.
+ * Author: Achim Staebler
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
+// Neutrals
+$white:                 hsl(0, 0, 100); //#FFFFFF
+$off-white:             hsl(0, 0, 98); //#F9F9F9
+$lightest-gray:         hsl(0, 0, 93); //#EDEDED
+$lighter-gray:          hsl(0, 0, 80); //#CCCCCC
+$light-gray:            hsl(0, 0, 65); //#A6A6A6
+$gray:                  hsl(0, 0, 50); //#808080
+$dark-gray:             hsl(0, 0, 35); //#595959
+$darker-gray:           hsl(0, 0, 20); //#333333
+$darkest-gray:          hsl(0, 0, 12); //#1F1F1F
+$off-black:             hsl(0, 0, 2);  //#050505
+$black:                 hsl(0, 0, 0);  //#000000
+
+// Blues
+$lightest-blue:   #E5F1F9;
+$lighter-blue:    #B9E0F7; // $esri-colors-blue-14 (was #B7DDEB)
+$light-blue:      #00B9F2; // $esri-colors-blue-13 (was #00B0DF)
+$blue:            #007AC2; // $esri-colors-blue-12
+$dark-blue:       #003C60;
+$darker-blue:     #004575; // $esri-colors-blue-11
+
+// Greens
+$lightest-green:  #CCDE91; //$esri-colors-green-18
+$lighter-green:   #CCDF8D;
+$light-green:     #A2C950;
+$green:           #35AC46; //$esri-colors-green-16 (was #37A344)
+$dark-green:      #296A32;
+
+// Brights
+$orange:          #F89927; //$esri-colors-orange-21
+$yellow:          #FFEC4F; //$esri-colors-yellow-22
+$red:             #DA4D1E; //$esri-colors-red (was #CC0006)
+$caution:         #B9392F;
+$caution-light:   #D6564D;
+
+// Purple
+$lightest-purple: #DFCCE3;
+$lighter-purple:  #B279B4;
+$light-purple:    #8F499C;
+$purple:          #762783;
+$dark-purple:     #6B1978;
+
+// Earth Tones
+$light-tan:       #F3F3EF;
+$tan:             #F1F1F1;
+$dark-tan:        #D3D3CF;
+$lighter-brown:   #ECDCB9;
+$light-brown:     #BE9969;
+$brown:           #7B4F1C;
+$dark-brown:      #523B20;
+
+
+// Grays
+$gray1:    #F7F8F8;
+$gray2:    #F2F3F3;
+$gray3:    #EFEEEF;
+$gray4:    #E5E6E7;
+$gray5:    #E0E0DF;
+$gray6:    #CBCBCB;
+$gray7:    #A6A8AB;
+$gray8:    #929497;
+$gray9:    #7F8183;
+$gray10:   #6C6D70;
+$gray11:   #57585A;
+$gray12:   #323232;
+
+// UI Active Colors
+$calcite-lightest-blue:#E1F0FB;
+$calcite-lighter-blue: #D1E9F9;
+$calcite-light-blue:   #7FBBDF;
+$calcite-blue:         #0079C1;
+$calcite-dark-blue:    #005E95;
+
+// UI Active Colors
+$calcite-ui-blue-1:      $calcite-lightest-blue;
+$calcite-ui-blue-2:      $calcite-lighter-blue;
+$calcite-esri-blue-light:$calcite-light-blue;
+$calcite-esri-blue:      $calcite-blue;
+$calcite-esri-blue-dark: $calcite-dark-blue;
+
+// Links
+$calcite-green:        #67A966;
+
+// Special Use
+$calcite-red:          #D94C1D;
+
+// Ribbon
+$ribbon-orange:        #EDA959;
+$ribbon-orange-light:  #FBE1C2;
+
+$ribbon-green:         #67A966;
+$ribbon-green-light:   #DCEDDA;
+
+$ribbon-red:           #C86A4A;
+$ribbon-red-light:     #F3DED7;
+
+$ribbon-purple:        #9081BC;
+$ribbon-purple-light:  #E5E1EF;
+
+$ribbon-brown:         #B78A54;
+$ribbon-brown-light:   #E8DDD3;
+
+// Icon Colors
+$icon-blue:            #57A6D9;
+$icon-blue-light:      #6DB5E3;
+$icon-blue-lighter:    #BDDBEE;
+$icon-blue-lightest:   #D3EAF9;
+
+$icon-yellow:          #D9C44C;
+$icon-yellow-light:    #E5D255;
+$icon-yellow-lighter:  #EFE498;
+$icon-yellow-lightest: #F4EEC8;
+
+$icon-orange:          #E89D48;
+$icon-orange-light:    #EEAA5A;
+$icon-orange-lighter:  #F7CB92;
+$icon-orange-lightest: #FBE2C3;
+
+$icon-green:           #5B945A;
+$icon-green-light:     #68AA67;
+$icon-green-lighter:   #9BC29D;
+$icon-green-lightest:  #DDEEDB;
+
+$icon-red:             #C7552E;
+$icon-red-light:       #C96B4B;
+$icon-red-lighter:     #E5A894;
+$icon-red-lightest:    #F5DFD8;
+
+$icon-purple:          #7C6CA8;
+$icon-purple-light:    #9182BD;
+$icon-purple-lighter:  #C5BDDD;
+$icon-purple-lightest: #E6E2EF;
+
+$icon-brown:           #A67947;
+$icon-brown-light:     #B88A55;
+$icon-brown-lighter:   #D3B490;
+$icon-brown-lightest:  #D3B490;
+// Base settings for all themes that can optionally be
+// overridden by the super-theme
+
+// Background of the presentation
+$backgroundColor: $off-white;
+$titleSlideColor: $blue;
+
+// Primary/body text
+$mainFont: 'Lato', sans-serif;
+$mainFontSize: 36px;
+$mainColor: $darker-gray;
+
+// Headings
+$headingFont: 'Lato', sans-serif;
+$headingColor: $darkest-gray;
+$headingLineHeight: 0.9em;
+$headingLetterSpacing: 0.02em;
+$headingTextTransform: normal;
+$headingTextShadow: 0px 0px 3px rgba(0,0,0,0.2);
+$heading1TextShadow: $headingTextShadow;
+
+// Links and actions
+$linkColor: $blue;
+$linkColorHover: $dark-blue;
+
+// Text selection
+$selectionBackgroundColor: $purple;
+$selectionColor: $lightest-gray;
+
+// Generates the presentation background, can be overridden
+// to return a background image or gradient
+@mixin bodyBackground() {
+  background: $backgroundColor;
+}
+
+@mixin titleSlide(){
+  background: $titleSlideColor;
+  .reveal {
+    color: $white;
+    h1, h2, h3, h4, h5, h6 {
+      color: $white;
+    }
+
+    a {
+      color: $light-blue;
+    }
+  }
+}
+
+
+/**
+ * Solarized colors by Ethan Schoonover
+ */
+html * {
+  color-profile: sRGB;
+  rendering-intent: auto;
+}
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
+
+html.title body {
+  @include titleSlide();
+}
+
+.reveal .progress {
+  height: 5px;
+  background: tranparent;
+}
+
+.map-contianer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+.reveal section img {
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  max-width: none;
+  max-height: none;
+}
+
+.reveal section code {
+  background: #1d1f21;
+  color: #c5c8c6;
+  padding: 5px;
+}
+
+.reveal section button {
+  background: $blue;
+  font-size: .75em;
+  border: none;
+  color: $white;
+  border-radius: 10px;
+  padding: .5em .75em ;
+  &:hover {
+    background-color: $dark-blue;
+  }
+}
