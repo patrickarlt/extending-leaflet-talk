@@ -25,14 +25,99 @@
       document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
     </script>
 
-    <!--[if lt IE 9]>
-    <script src="lib/js/html5shiv.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" href="lib/js/leaflet/leaflet.reveal.css" />
+    <link rel="stylesheet" href="lib/js/markercluster/MarkerCluster.css" />
+    <link rel="stylesheet" href="lib/js/markercluster/MarkerCluster.Default.css" />
 
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
-    <![endif]-->
+    <!-- Make the map fill the entire page -->
+    <style>
+      html, body, #map {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+    </style>
+
+    <!-- Define some additional styles for the clusters, you'll see these classes later -->
+    <style>
+     .reveal .cluster {
+        background: #2d84c8;
+        border-radius: 50%;
+        text-align: center;
+        color: white;
+        font-weight: 700;
+        border: 1px solid #2d84c8;
+        font-family: monospace;
+      }
+
+      .reveal .cluster.pink{
+        background: #ef9cbf;
+        border-color: #ef9cbf;
+      }
+
+      .cluster:before {
+         content: " ";
+         position: absolute;
+         border-radius: 50%;
+         z-index: -1;
+         top: 1px;
+         left: 1px;
+         right: 1px;
+         bottom: 1px;
+         border: 1px solid white;
+      }
+
+      .reveal .digits-1 {
+        font-size: 14px;
+        height: 28px;
+        width: 28px;
+        line-height: 28px;
+        margin-top: -14px;
+        margin-left: -14px;
+      }
+
+      .reveal .digits-2 {
+        font-size: 16px;
+        height: 34px;
+        width: 34px;
+        line-height: 35px;
+        margin-top: -17px;
+        margin-left: -17px;
+      }
+
+      .digits-2:before {
+        border-width: 2px;
+      }
+
+      .reveal .digits-3 {
+        font-size: 18px;
+        height: 48px;
+        width: 47px;
+        line-height: 47px;
+        border-width: 3px;
+        margin-top: -24px;
+        margin-left: -24px;
+      }
+
+      .digits-3:before {
+        border-width: 3px;
+      }
+
+      .reveal .digits-4 {
+        font-size: 18px;
+        height: 58px;
+        width: 58px;
+        line-height: 57px;
+        border-width: 4px;
+        margin-top: -29px;
+        margin-left: -29px;
+      }
+
+      .digits-4:before {
+        border-width: 4px;
+      }
+    </style>
+
   </head>
 
   <body>
@@ -42,15 +127,114 @@
     <div class="reveal">
 
       <div class="slides">
+        <section data-state="title">
+          <h2>Extending Leaflet</h2>
+          <p>
+            <small><a href="http://patrickarlt.github.io/extending-leaflet-talk">http://patrickarlt.github.io/extending-leaflet-talk</a> / <a href="http://twitter.com/patrickarlt">@patrickarlt</a></small>
+          </p>
+        </section>
 
         <section data-state="title">
-          <h2>Format Conversion</h2>
+          <h2>So how did I get here</h2>
+          <ul>
+            <li>I work at Esri R&D Center Portland</li>
+            <li>I really like Leaflet</li>
+            <li>I started making a plugin for Leaflet to work with Esri services</li>
+          </ul>
+        </section>
+
+        <section data-state="map1">
+          <h2>Basemaps and Tiles</h2>
+          <div id="map1" style="height: 600px; width: 100%;"></div>
+        </section>
+
+        <section data-state="map2">
+          <h2>Feature Layer</h2>
+          <div id="map2" style="height: 600px; width: 100%;"></div>
+        </section>
+
+        <section data-state="map3">
+          <h2>Bonus: Clustering!</h2>
+          <div id="map3" style="height: 600px; width: 100%;"></div>
+        </section>
+
+        <section>
+          <h2>Coming Soon</h2>
+          <ul>
+            <li>Labeled Feature Layer (w/ Leaflet.label)</li>
+            <li>Heatmap Feature Layer</li>
+          </ul>
+        </section>
+
+        <section data-state="title">
+          <h2>So how does it work?</h2>
+        </section>
+
+        <section>
+          <h2>L.Class</h2>
+          <ul>
+            <li>Everything extends <code>L.Class</code>.</li>
+            <li><code>L.Class</code> also mixins (includes), statics and default options.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Interfaces</h2>
+          <p>A standard set of methods for defineing how things work.</p>
+          <ul>
+            <li>Layers should impliment <a href="http://leafletjs.com/reference.html#ilayer">ILayer</a></li>
+            <li>Interactions should impliment <a href="http://leafletjs.com/reference.html#ihandler">IHandler</a></li>
+            <li>Controls impliment <a href="http://leafletjs.com/reference.html#icontrol">IControl</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>A Custom Layer</h2>
+          <pre><code>L.MyLayer = L.Class.extend({
+  statics: {
+    FOO: 'bar'
+  },
+  includes: L.Mixin.Events,
+  options: {
+    size: 512
+  },
+  initialize: function(options){
+    /* mix passed options with defaults */
+    L.Util.setOptions(this, options);
+  },
+  onAdd: function(map){
+    /* how to add your layer to the map */
+  },
+  onRemove: function(map){
+    /* how to remove your layer from the map */
+  }
+});</code></pre>
+        </section>
+
+        <section>
+          <h2>Virtual Grid</h2>
+          <p>Create a consistant tile like grid to query an API with. This reduces calls for duplicate areas and results in smaller requests.</p>
+          <p><a href="https://github.com/patrickarlt/leaflet-virtual-grid">https://github.com/patrickarlt/leaflet-virtual-grid</a></p>
+        </section>
+
+        <section data-state="map4">
+          <div id="map4" style="height: 600px; width: 100%;"></div>
+        </section>
+
+        <section data-state="map5">
+          <div id="map5" style="height: 600px; width: 100%;"></div>
+        </section>
+
+        <section data-state="map6">
+          <h2>Virtual Grid In Action</h2>
+          <p>Request Instagram content in each grid cell.</p>
+          <div id="map6" style="height: 400px; width: 100%;"></div>
         </section>
 
         <section data-state="title">
           <h2>Thanks</h2>
           <p>
-            <small><a href="https://github.com/esri/Terraformer">https://github.com/esri/Terraformer</a> / <a href="http://twitter.com/patrickarlt">@patrickarlt</a></small>
+            <small><a href="http://patrickarlt.github.io/extending-leaflet-talk">http://patrickarlt.github.io/extending-leaflet-talk</a> / <a href="http://twitter.com/patrickarlt">@patrickarlt</a></small>
           </p>
         </section>
       </div>
@@ -68,6 +252,15 @@
 
     <!-- Virtual Grid -->
     <script src="lib/js/leaflet-virtual-grid.js">  </script>
+
+    <!-- Load the ClusteredFeatureLayer plugin -->
+    <script src="lib/js/esri-leaflet/clustered-feature-layer.js"></script>
+
+    <!-- Load the ClusteredFeatureLayer plugin -->
+    <script src="lib/js/markercluster/leaflet.markercluster.js"></script>
+
+    <!-- JQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
     <script>
       // Full list of configuration options available here:
@@ -95,13 +288,290 @@
       });
 
       Reveal.addEventListener("map1", function () {
+        var map = L.map('map1').setView([45.5276173643906, -122.66736388203228], 13);
 
+        // add our BasemapLayer
+        var tiles = L.esri.basemapLayer("Streets").addTo(map);
       });
 
       Reveal.addEventListener("map2", function () {
+        var map = L.map('map2').setView([45.5276173643906, -122.66736388203228], 13);
+
+        // add our BasemapLayer
+        var tiles = L.esri.basemapLayer("Gray").addTo(map);
+
+        var parks = L.esri.featureLayer("http://services.arcgis.com/rOo16HdIMeOBI4Mb/arcgis/rest/services/Parks_pdx/FeatureServer/0", {
+          style: function(){
+            return {
+              color: "#74d27f",
+              weight: 2,
+              opacity: 1,
+              fillOpacity: 0.25
+            }
+          }
+        }).addTo(map);
       });
 
       Reveal.addEventListener("map3", function () {
+        var map = L.map('map3').setView([45.5276173643906, -122.66736388203228], 13);
+
+        // Add ArcGIS Online basemap
+        L.esri.basemapLayer("Gray").addTo(map);
+
+        // Define some icons that represent our bus stops
+        var icons = {
+          north: L.icon({
+            iconUrl: 'images/bus-stop-north.png',
+            iconRetinaUrl: 'images/bus-stop-north@2x.png',
+            iconSize: [27, 31],
+            iconAnchor: [13.5, 17.5],
+            popupAnchor: [0, -11],
+          }),
+          south: L.icon({
+            iconUrl: 'images/bus-stop-south.png',
+            iconRetinaUrl: 'images/bus-stop-south@2x.png',
+            iconSize: [27, 31],
+            iconAnchor: [13.5, 13.5],
+            popupAnchor: [0, -11],
+          }),
+          east: L.icon({
+            iconUrl: 'images/bus-stop-east.png',
+            iconRetinaUrl: 'images/bus-stop-east@2x.png',
+            iconSize: [31, 27],
+            iconAnchor: [13.5, 17.5],
+            popupAnchor: [0, -11],
+          }),
+          west: L.icon({
+            iconUrl: 'images/bus-stop-west.png',
+            iconRetinaUrl: 'images/bus-stop-west@2x.png',
+            iconSize: [31, 27],
+            iconAnchor: [17.5, 13.5],
+            popupAnchor: [0, -11],
+          }),
+          none: L.icon({
+            iconUrl: 'images/bus-stop.png',
+            iconRetinaUrl: 'images/bus-stop@2x.png',
+            iconSize: [27, 27],
+            iconAnchor: [13.5, 13.5],
+            popupAnchor: [0, -11],
+          }),
+        };
+
+        // create a new cluster layer
+        var fl = L.esri.clusteredFeatureLayer("http://services.arcgis.com/rOo16HdIMeOBI4Mb/arcgis/rest/services/stops/FeatureServer/0", {
+
+          // you need to pass an instance of L.MarkerClusterGroup
+          // we are specifying a few options for styling
+          // https://github.com/Leaflet/Leaflet.markercluster#usage
+          cluster: new L.MarkerClusterGroup({
+            spiderfyOnMaxZoom:false,
+            disableClusteringAtZoom: 16,
+            polygonOptions: {
+              color: "#2d84c8",
+              weight: 4,
+              opacity: 1,
+              fillOpacity: 0.5
+            },
+            // this function defines how the icons
+            // representing  clusters are created
+            iconCreateFunction: function(cluster) {
+              // get the number of items in the cluster
+              var count = cluster.getChildCount();
+
+              // figure out how many digits long the number is
+              var digits = (count+"").length;
+
+              // return a new L.DivIcon with our classes so we can
+              // style them with CSS. Take a look at the CSS in
+              // the <head> to see these styles. You have to set
+              // iconSize to null if you want to use CSS to set the
+              // width and height.
+              return new L.DivIcon({
+                html: count,
+                className:"cluster digits-"+digits,
+                iconSize: null
+              });
+            }
+          }),
+
+          // this function defines how individual markers
+          // are created. You can see we are using the
+          // direction from the feature to get the icon
+          createMarker: function (geojson, latlng) {
+            var direction = (geojson.properties.direction) ? geojson.properties.direction.toLowerCase() : "none";
+            return L.marker(latlng, {
+              icon: icons[direction]
+            });
+          },
+
+          // this function will bind a popup to each marker
+          // so when individual markers are visible you can
+          // click on them for more information
+          onEachMarker: function(geojson, marker) {
+            marker.bindPopup("<h3>"+geojson.properties.stop_name+"</h3><p>Stop ID: "+geojson.properties.stop_id+"</p><p>"+geojson.properties.stop_desc+"</p>")
+          }
+        }).addTo(map);
+      });
+
+      Reveal.addEventListener("map4", function () {
+        // make a Map
+        var map = L.map('map4').setView([45.5276173643906, -122.66736388203228], 13);
+
+        // add our BasemapLayer
+        var tiles = L.esri.basemapLayer("Gray").addTo(map);
+
+        // add some extra labels as a second BasemapLayer
+        var labels = L.esri.basemapLayer("GrayLabels").addTo(map);
+
+        // make a new LayerGroup to store shapes representing our grid
+        var debug = L.layerGroup().addTo(map);
+
+        // make a new VirtualGrid
+        var virtualGrid = L.virtualGrid({
+          cellSize: 256
+        });
+
+        // when new cells come into view...
+        virtualGrid.on("newcells", function(e) {
+          for (var i = 0; i < e.cells.length; i++) {
+            var cell = e.cells[i];
+            debug.addLayer(L.rectangle(cell.bounds, {
+              color: '#3ac1f0',
+              weight: 2,
+              opacity: 0.5,
+              fillOpacity: 0.25
+            }));
+          }
+        });
+
+        // then add the layer. Adding this after declaring the event works better
+        virtualGrid.addTo(map);
+      });
+
+      Reveal.addEventListener("map5", function () {
+
+        // make a Map
+        var map = L.map('map5').setView([45.5276173643906, -122.66736388203228], 13);
+
+        // add our BasemapLayer
+        var tiles = L.esri.basemapLayer("Gray").addTo(map);
+
+        // add some extra labels as a second BasemapLayer
+        var labels = L.esri.basemapLayer("GrayLabels").addTo(map);
+
+        // make a new LayerGroup to store shapes representing our grid
+        var debug = L.layerGroup().addTo(map);
+
+        // make a new VirtualGrid
+        var virtualGrid = L.virtualGrid({
+          cellSize: 128
+        });
+
+        // when new cells come into view...
+        virtualGrid.on("newcells", function(e) {
+          for (var i = 0; i < e.cells.length; i++) {
+            var cell = e.cells[i];
+            debug.addLayer(L.circle(cell.center, cell.radius, {
+              color: '#3ac1f0',
+              weight: 2,
+              opacity: 0.5,
+              fillOpacity: 0.25
+            }));
+          }
+        });
+
+        // then add the layer. Adding this after declaring the event works better
+        virtualGrid.addTo(map);
+      });
+
+      Reveal.addEventListener("map6", function () {
+
+        // make a Map
+        var map = L.map('map6').setView([45.5276173643906, -122.66736388203228], 13);
+
+        // add our BasemapLayer
+        var tiles = L.esri.basemapLayer("Gray").addTo(map);
+
+        // add some extra labels as a second BasemapLayer
+        var labels = L.esri.basemapLayer("GrayLabels").addTo(map);
+
+        // make a new LayerGroup to store shapes representing our grid
+        var debug = L.layerGroup({
+          cellSize: 128
+        }).addTo(map);
+
+        // make a new VirtualGrid
+        var virtualGrid = L.virtualGrid();
+
+        var cluster = new L.MarkerClusterGroup({
+          spiderfyOnMaxZoom:false,
+          disableClusteringAtZoom: 16,
+          polygonOptions: {
+            color: "#ef9cbf",
+            weight: 4,
+            opacity: 1,
+            fillOpacity: 0.5
+          },
+          // this function defines how the icons
+          // representing  clusters are created
+          iconCreateFunction: function(cluster) {
+            // get the number of items in the cluster
+            var count = cluster.getChildCount();
+
+            // figure out how many digits long the number is
+            var digits = (count+"").length;
+
+            // return a new L.DivIcon with our classes so we can
+            // style them with CSS. Take a look at the CSS in
+            // the <head> to see these styles. You have to set
+            // iconSize to null if you want to use CSS to set the
+            // width and height.
+            return new L.DivIcon({
+              html: count,
+              className:"cluster pink digits-"+digits,
+              iconSize: null
+            });
+          }
+        }).addTo(map);
+
+        var loaded = [];
+
+        // when new cells come into view...
+        virtualGrid.on("newcells", function(e) {
+          for (var i = 0; i < e.cells.length; i++) {
+            var cell = e.cells[i];
+            console.log(cell.center.lat, cell.center.lng, cell.radius);
+            $.ajax({
+              dataType: "jsonp",
+              url: "https://api.instagram.com/v1/media/search",
+              data: {
+                lat: cell.center.lat,
+                lng: cell.center.lng,
+                distance: cell.radius,
+                client_id: "75742edce2664b889abb77373b4f263e"
+              }
+            }).done(function (data) {
+              console.log(data);
+              for (var i = data.data.length - 1; i >= 0; i--) {
+                var photo = data.data[i];
+                if(loaded.indexOf(photo.id) === -1){
+                  loaded.push(photo.id);
+                  var marker = L.circleMarker([photo.location.latitude, photo.location.longitude], {
+                    color: "#ef9cbf",
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.5
+                  });
+                  cluster.addLayer(marker);
+                }
+              };
+
+            });
+          }
+        });
+
+        // then add the layer. Adding this after declaring the event works better
+        virtualGrid.addTo(map);
       });
     </script>
 
